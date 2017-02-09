@@ -17,12 +17,7 @@ import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
-/**
- * Hello world!
- *
- */
-public class LabelApp
-{
+public class HaikuMaster {
     /**
      * Be sure to specify the name of your application. If the application name is {@code null} or
      * blank, the application will log a warning. Suggested format is "MyCompany-ProductName/1.0".
@@ -31,7 +26,7 @@ public class LabelApp
 
     private static final String APPLICATION_NAME = "HaikuMaster";
 
-    private static final int MAX_LABELS = 3;
+    private static final int MAX_LABELS = 20;
 
     // [START run_application]
 
@@ -42,14 +37,15 @@ public class LabelApp
 //    if (args.length != 1) {
 //      System.err.println("Missing imagePath argument.");
 //      System.err.println("Usage:");
-//      System.err.printf("\tjava %s imagePath\n", LabelApp.class.getCanonicalName());
+//      System.err.printf("\tjava %s imagePath\n", HaikuMaster.class.getCanonicalName());
 //      System.exit(1);
 //    }
         Path imagePath = Paths.get("C:\\Users\\Oliver\\Desktop\\dobra_niva.jpg");
 
 
-        LabelApp app = new LabelApp(getVisionService());
+        HaikuMaster app = new HaikuMaster(getVisionService());
         printLabels(System.out, imagePath, app.labelImage(imagePath, MAX_LABELS));
+        System.out.println("The most probable label is : " + app.labelImage(imagePath, MAX_LABELS).get(0).getDescription());
     }
 
     /**
@@ -87,9 +83,9 @@ public class LabelApp
     private final Vision vision;
 
     /**
-     * Constructs a {@link LabelApp} which connects to the Vision API.
+     * Constructs a {@link HaikuMaster} which connects to the Vision API.
      */
-    public LabelApp(Vision vision) {
+    public HaikuMaster(Vision vision) {
         this.vision = vision;
     }
 

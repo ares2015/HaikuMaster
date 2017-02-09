@@ -5,9 +5,9 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Unit test for simple LabelApp.
+ * Unit test for simple HaikuMaster.
  */
-public class LabelAppTest
+public class HaikuMasterTest
     extends TestCase
 {
     /**
@@ -15,7 +15,7 @@ public class LabelAppTest
      *
      * @param testName name of the test case
      */
-    public LabelAppTest(String testName )
+    public HaikuMasterTest(String testName)
     {
         super( testName );
     }
@@ -25,7 +25,7 @@ public class LabelAppTest
      */
     public static Test suite()
     {
-        return new TestSuite( LabelAppTest.class );
+        return new TestSuite(HaikuMasterTest.class);
     }
 
     /**
