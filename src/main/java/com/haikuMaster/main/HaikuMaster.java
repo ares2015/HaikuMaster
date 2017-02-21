@@ -1,4 +1,4 @@
-package com.haikuMaster;
+package com.haikuMaster.main;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
