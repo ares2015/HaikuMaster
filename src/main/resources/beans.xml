@@ -20,4 +20,21 @@
           class="com.haikuMaster.database.TrainingDataDatabaseAccessorImpl">
         <constructor-arg ref="jdbcTemplate"/>
     </bean>
+
+    <bean id="tokenizer" class="com.haikuMaster.tokenizer.TokenizerImpl"></bean>
+
+
+    <bean id="haikuSentenceCreator"
+          class="com.haikuMaster.composer.HaikuSentenceCreatorImpl">
+        <constructor-arg ref="tokenizer"/>
+    </bean>
+
+
+    <bean id="haikuComposer"
+          class="com.haikuMaster.composer.HaikuComposerImpl">
+        <constructor-arg ref="trainingDataDatabaseAccessor"/>
+        <constructor-arg ref="haikuSentenceCreator"/>
+    </bean>
+
+
 </beans>

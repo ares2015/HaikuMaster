@@ -8,9 +8,11 @@ import com.google.api.services.vision.v1.Vision;
 import com.google.api.services.vision.v1.VisionScopes;
 import com.google.api.services.vision.v1.model.*;
 import com.google.common.collect.ImmutableList;
+import com.haikuMaster.composer.HaikuComposer;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,50 +24,48 @@ public class HaikuMaster {
      * Be sure to specify the name of your application. If the application name is {@code null} or
      * blank, the application will log a warning. Suggested format is "MyCompany-ProductName/1.0".
      */
-//    private static final String APPLICATION_NAME = "Google-VisionLabelSample/1.0";
-
     private static final String APPLICATION_NAME = "HaikuMaster";
 
     private static final int MAX_LABELS = 20;
 
-    // [START run_application]
+    private final Vision vision;
 
-    /**
-     * Annotates an image using the Vision API.
-     */
+    private HaikuComposer haikuComposer;
+
+    public HaikuMaster(Vision vision, HaikuComposer haikuComposer) {
+        this.haikuComposer = haikuComposer;
+        this.vision = vision;
+    }
+
     public static void main(String[] args) throws IOException, GeneralSecurityException {
-//    if (args.length != 1) {
-//      System.err.println("Missing imagePath argument.");
-//      System.err.println("Usage:");
-//      System.err.printf("\tjava %s imagePath\n", HaikuMaster.class.getCanonicalName());
-//      System.exit(1);
-//    }
-        Path imagePath = Paths.get("C:\\Users\\Oliver\\Desktop\\dobra_niva.jpg");
+        long startTime = System.currentTimeMillis();
+//        Path imagePath = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\fangora_pajstun.jpg");
+//        Path imagePath = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\jogi.jpg");
+//        Path imagePath = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\ocean_sunset.jpg");
+//        Path imagePath = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\dobra_niva.jpg");
+//        Path imagePath = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\red_rose.jpg");
+//        Path imagePath = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\moon_stars.jpg");
+//        Path imagePath = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\moon_clouds.jpeg");
+//        Path imagePath = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\fox.jpg");
+//        Path imagePath = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\forest.jpg");
+        Path imagePath = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\tree.jpg");
 
-
-        HaikuMaster app = new HaikuMaster(getVisionService());
-        printLabels(System.out, imagePath, app.labelImage(imagePath, MAX_LABELS));
-        System.out.println("The most probable label is : " + app.labelImage(imagePath, MAX_LABELS).get(0).getDescription());
+        final ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+        HaikuComposer haikuComposer = (HaikuComposer) context.getBean("haikuComposer");
+        Vision visionService = getVisionService();
+        HaikuMaster haikuMaster = new HaikuMaster(visionService, haikuComposer);
+        List<EntityAnnotation> imageLabelsList = haikuMaster.labelImage(imagePath, MAX_LABELS);
+        String haiku = haikuMaster.createHaiku(imageLabelsList.get(0).getDescription());
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+        System.out.println("Seed word for haiku: " + imageLabelsList.get(0).getDescription());
+        System.out.println("Created haiku: " + haiku);
+        System.out.println("Picture analysed and haiku created in " + (elapsedTime / 1000) % 60 + " seconds");
     }
 
-    /**
-     * Prints the labels received from the Vision API.
-     */
-    public static void printLabels(PrintStream out, Path imagePath, List<EntityAnnotation> labels) {
-        out.printf("Labels for image %s:\n", imagePath);
-        for (EntityAnnotation label : labels) {
-            out.printf(
-                    "\t%s (score: %.3f)\n",
-                    label.getDescription(),
-                    label.getScore());
-        }
-        if (labels.isEmpty()) {
-            out.println("\tNo labels found.");
-        }
+    public String createHaiku(String seedWord) {
+        return haikuComposer.compose(seedWord);
     }
-    // [END run_application]
-
-    // [START authenticate]
 
     /**
      * Connects to the Vision API using Application Default Credentials.
@@ -80,14 +80,10 @@ public class HaikuMaster {
     }
     // [END authenticate]
 
-    private final Vision vision;
-
     /**
      * Constructs a {@link HaikuMaster} which connects to the Vision API.
      */
-    public HaikuMaster(Vision vision) {
-        this.vision = vision;
-    }
+
 
     /**
      * Gets up to {@code maxResults} labels for an image stored at {@code path}.
