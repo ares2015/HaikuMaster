@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class HaikuMaster {
@@ -38,30 +39,43 @@ public class HaikuMaster {
     }
 
     public static void main(String[] args) throws IOException, GeneralSecurityException {
+        List<Path> pathsList = new ArrayList<>();
+        Path imagePath1 = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\fangora_pajstun.jpg");
+        Path imagePath2 = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\jogi.jpg");
+        Path imagePath3 = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\ocean_sunset.jpg");
+        Path imagePath4 = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\dobra_niva.jpg");
+        Path imagePath5 = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\red_rose.jpg");
+        Path imagePath6 = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\moon_stars.jpg");
+        Path imagePath7 = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\moon_clouds.jpeg");
+        Path imagePath8 = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\fox.jpg");
+        Path imagePath9 = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\forest.jpg");
+        Path imagePath10 = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\tree.jpg");
+        pathsList.add(imagePath1);
+        pathsList.add(imagePath2);
+        pathsList.add(imagePath3);
+        pathsList.add(imagePath4);
+        pathsList.add(imagePath5);
+        pathsList.add(imagePath6);
+        pathsList.add(imagePath7);
+        pathsList.add(imagePath8);
+        pathsList.add(imagePath9);
+        pathsList.add(imagePath10);
 
-//        Path imagePath = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\fangora_pajstun.jpg");
-        Path imagePath = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\jogi.jpg");
-//        Path imagePath = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\ocean_sunset.jpg");
-//        Path imagePath = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\dobra_niva.jpg");
-//        Path imagePath = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\red_rose.jpg");
-//        Path imagePath = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\moon_stars.jpg");
-//        Path imagePath = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\moon_clouds.jpeg");
-//        Path imagePath = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\fox.jpg");
-//        Path imagePath = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\forest.jpg");
-//        Path imagePath = Paths.get("C:\\Users\\Oliver\\Documents\\NlpTrainingData\\HaikuMasterTrainingPictures\\tree.jpg");
 
         final ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
         HaikuComposer haikuComposer = (HaikuComposer) context.getBean("haikuComposer");
         Vision visionService = getVisionService();
         HaikuMaster haikuMaster = new HaikuMaster(visionService, haikuComposer);
-        long startTime = System.currentTimeMillis();
-        List<EntityAnnotation> imageLabelsList = haikuMaster.labelImage(imagePath, MAX_LABELS);
-        String haiku = haikuMaster.createHaiku(imageLabelsList.get(0).getDescription());
-        long stopTime = System.currentTimeMillis();
-        long elapsedTime = stopTime - startTime;
-        System.out.println("Seed word for haiku: " + imageLabelsList.get(0).getDescription());
-        System.out.println("Created haiku: " + haiku);
-        System.out.println("Picture analysed and haiku created in " + (elapsedTime / 1000) % 60 + " seconds");
+        for (Path path : pathsList) {
+            long startTime = System.currentTimeMillis();
+            List<EntityAnnotation> imageLabelsList = haikuMaster.labelImage(path, MAX_LABELS);
+            String haiku = haikuMaster.createHaiku(imageLabelsList.get(0).getDescription());
+            long stopTime = System.currentTimeMillis();
+            long elapsedTime = stopTime - startTime;
+            System.out.println("Seed word for haiku: " + imageLabelsList.get(0).getDescription());
+            System.out.println("Created haiku: " + haiku);
+            System.out.println("Picture analysed and haiku created in " + (elapsedTime / 1000) % 60 + " seconds");
+        }
     }
 
     public String createHaiku(String seedWord) {

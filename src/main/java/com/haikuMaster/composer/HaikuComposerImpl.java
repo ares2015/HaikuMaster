@@ -44,23 +44,26 @@ public class HaikuComposerImpl implements HaikuComposer {
     public String compose(String seedWord) {
         StringBuilder stringBuilder = new StringBuilder();
         List<String> word2VecDataForToken = word2VecModel.get(seedWord);
-        Word2VecTokenTagData word2VecTokenTagData = word2VecTokenTagDataFactory.create(seedWord, word2VecDataForToken, tokenTagDataModel);
+        if (word2VecDataForToken != null) {
+            Word2VecTokenTagData word2VecTokenTagData = word2VecTokenTagDataFactory.create(seedWord, word2VecDataForToken, tokenTagDataModel);
 //        String haikuPattern = haikuPatterns.get(0);
-        String haikuPattern = "@A N V @the V N ; on the N @a N V and V . @";
-        String[] haikuPatternSentences = haikuPattern.split("@");
-        int haikuIndex = 0;
-        for (String haikuPatternSentence : haikuPatternSentences) {
-            if (!"".equals(haikuPatternSentence)) {
-                boolean isFirstSentence = haikuIndex == 0;
-                String haikuSentence = haikuSentenceCreator.create(haikuPatternSentence, word2VecTokenTagData, isFirstSentence);
-                stringBuilder.append(haikuSentence);
-                stringBuilder.append(" ");
+            String haikuPattern = "@A N V @the V N ; on the N @a N V and V . @";
+            String[] haikuPatternSentences = haikuPattern.split("@");
+            int haikuIndex = 0;
+            for (String haikuPatternSentence : haikuPatternSentences) {
+                if (!"".equals(haikuPatternSentence)) {
+                    boolean isFirstSentence = haikuIndex == 0;
+                    String haikuSentence = haikuSentenceCreator.create(haikuPatternSentence, word2VecTokenTagData, isFirstSentence);
+                    stringBuilder.append(haikuSentence);
+                    stringBuilder.append(" ");
 
 //                stringBuilder.append("\n");
-                haikuIndex++;
+                    haikuIndex++;
+                }
             }
+            return stringBuilder.toString();
         }
-        return stringBuilder.toString();
+        return "no haiku could be created";
     }
 
 
